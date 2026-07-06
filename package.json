@@ -1,0 +1,30 @@
+{
+  "name": "@dz-ssbm/ssbm",
+  "version": "0.0.7",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "tsx --test"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.0",
+    "husky": "^9.1.7",
+    "tsx": "^4.23.0",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "@dz-ssbm/util": "github:npm-dz-ssbm/util",
+    "@slippi/slippi-js": "^9.1.2"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true
+  }
+}
