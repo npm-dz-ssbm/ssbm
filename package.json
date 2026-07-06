@@ -12,8 +12,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "test": "tsx --test",
-    "prepare": "husky"
+    "test": "tsx --test"
   },
   "devDependencies": {
     "@types/node": "^26.1.0",
