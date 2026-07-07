@@ -35,8 +35,8 @@ const charRecordGetter = (recName: string) => () => {
 const charRecordRowGetter = (recName: string) => (k: any) =>
   (charRecordGetter(recName)()[k] as SSBMChar) || Character.Invalid;
 
-const charRecordRowSetter = (recName: string) => (k: any, v: any) =>
-  (charRecordGetter(recName)()[k] = v);
+const charRecordRowSetter =
+  (recName: string) => (k: any, v: any) => (charRecordGetter(recName)()[k] = v);
 
 const setCharById = charRecordRowSetter("__charById");
 const setCharBySlippiApiName = charRecordRowSetter("__charBySlippiApiName");
@@ -320,7 +320,7 @@ export function parseSlpData(bytes: Uint8Array): $.Result<SlpData, ParseError> {
     const anyParsedConversions = conversions.length > 0;
     const settings = game.getSettings();
     const randomSeed = settings?.randomSeed || 0;
-    const matchInfo = $.maybe(function* (bind) {
+    const matchInfo = $.xMaybe(function* (bind) {
       const info = yield* bind($.maybeFromNullable(settings?.matchInfo));
       const sessionId = yield* bind($.maybeFromNullable(info.sessionId));
       const gameNumber = yield* bind($.maybeFromNullable(info.gameNumber));
@@ -338,17 +338,18 @@ export function parseSlpData(bytes: Uint8Array): $.Result<SlpData, ParseError> {
     );
     const numPlayers = playerIndSet.size;
     const areAllPlayersParsed = [...playerIndSet].every((ind) =>
-      Boolean(settingsPlayers[ind]),
+      Boolean(settingsPlayers[ind])
     );
     const sessionName = settings?.matchInfo?.sessionId || "";
-    const startAt = $.mapMaybe($.maybeFromNullable(metadata.startAt), (s) =>
-      new Date(s).valueOf(),
+    const startAt = $.mapMaybe(
+      $.maybeFromNullable(metadata.startAt),
+      (s) => new Date(s).valueOf(),
     );
     function infoIdStr(i: $.Maybe_X<typeof matchInfo>) {
       const s = randomSeed;
       return `s.${$.Id.str(s, i.sessionId, i.gameNumber, i.tiebreakerNumber)}`;
     }
-    const gameId = yield* $.ok(
+    const gameId = yield* $.xOk(
       $.some(
         $.firstMaybe(
           $.mapMaybe(startAt, (st) => `t.${$.Id.str(randomSeed, st)}`),
@@ -361,15 +362,15 @@ export function parseSlpData(bytes: Uint8Array): $.Result<SlpData, ParseError> {
     const stageId = settings?.stageId || 0;
     const gameMode = settings?.gameMode || GameMode.VS;
     const inGameMode = settings?.inGameMode || 0;
-    const is1v1ParsedSingles =
-      inGameMode === 32 &&
+    const is1v1ParsedSingles = inGameMode === 32 &&
       !isTeams &&
       numPlayers === 2 &&
       areAllPlayersParsed &&
       anyParsedConversions;
     const frames = game.getFrames();
-    const lastFrame = $.orMaybe_($.maybeFromNullable(metadata?.lastFrame), () =>
-      Math.max(...Object.keys(frames).map((s) => parseInt(s, 10))),
+    const lastFrame = $.orMaybe_(
+      $.maybeFromNullable(metadata?.lastFrame),
+      () => Math.max(...Object.keys(frames).map((s) => parseInt(s, 10))),
     );
     const gameEnd = game.getGameEnd();
 
@@ -454,10 +455,11 @@ export function parseSlpData(bytes: Uint8Array): $.Result<SlpData, ParseError> {
         const frameDelta = endFrame === undefined ? NaN : endFrame - startFrame;
         const validFrameDelta = !Number.isNaN(frameDelta) && frameDelta >= 0;
 
-        const percentDelta =
-          endPercent === undefined ? NaN : endPercent - startPercent;
-        const validPercentDelta =
-          !Number.isNaN(percentDelta) && percentDelta >= 0;
+        const percentDelta = endPercent === undefined
+          ? NaN
+          : endPercent - startPercent;
+        const validPercentDelta = !Number.isNaN(percentDelta) &&
+          percentDelta >= 0;
         return [
           {
             process: "intake",

@@ -220,7 +220,7 @@ export function parseSlpData(bytes) {
         const anyParsedConversions = conversions.length > 0;
         const settings = game.getSettings();
         const randomSeed = settings?.randomSeed || 0;
-        const matchInfo = $.maybe(function* (bind) {
+        const matchInfo = $.xMaybe(function* (bind) {
             const info = yield* bind($.maybeFromNullable(settings?.matchInfo));
             const sessionId = yield* bind($.maybeFromNullable(info.sessionId));
             const gameNumber = yield* bind($.maybeFromNullable(info.gameNumber));
@@ -238,7 +238,7 @@ export function parseSlpData(bytes) {
             const s = randomSeed;
             return `s.${$.Id.str(s, i.sessionId, i.gameNumber, i.tiebreakerNumber)}`;
         }
-        const gameId = yield* $.ok($.some($.firstMaybe($.mapMaybe(startAt, (st) => `t.${$.Id.str(randomSeed, st)}`), $.mapMaybe(matchInfo, infoIdStr)), ParseError.NoIdent));
+        const gameId = yield* $.xOk($.some($.firstMaybe($.mapMaybe(startAt, (st) => `t.${$.Id.str(randomSeed, st)}`), $.mapMaybe(matchInfo, infoIdStr)), ParseError.NoIdent));
         const isTeams = settings?.isTeams || false;
         const stageId = settings?.stageId || 0;
         const gameMode = settings?.gameMode || GameMode.VS;
@@ -322,8 +322,11 @@ export function parseSlpData(bytes) {
                 }
                 const frameDelta = endFrame === undefined ? NaN : endFrame - startFrame;
                 const validFrameDelta = !Number.isNaN(frameDelta) && frameDelta >= 0;
-                const percentDelta = endPercent === undefined ? NaN : endPercent - startPercent;
-                const validPercentDelta = !Number.isNaN(percentDelta) && percentDelta >= 0;
+                const percentDelta = endPercent === undefined
+                    ? NaN
+                    : endPercent - startPercent;
+                const validPercentDelta = !Number.isNaN(percentDelta) &&
+                    percentDelta >= 0;
                 return [
                     {
                         process: "intake",
