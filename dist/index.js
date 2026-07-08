@@ -220,7 +220,7 @@ export function parseSlpData(bytes) {
         const anyParsedConversions = conversions.length > 0;
         const settings = game.getSettings();
         const randomSeed = settings?.randomSeed || 0;
-        const matchInfo = $.xMaybe(function* (bind) {
+        const matchInfo = $.genMaybe(function* (bind) {
             const info = yield* bind($.maybeFromNullable(settings?.matchInfo));
             const sessionId = yield* bind($.maybeFromNullable(info.sessionId));
             const gameNumber = yield* bind($.maybeFromNullable(info.gameNumber));
@@ -322,11 +322,8 @@ export function parseSlpData(bytes) {
                 }
                 const frameDelta = endFrame === undefined ? NaN : endFrame - startFrame;
                 const validFrameDelta = !Number.isNaN(frameDelta) && frameDelta >= 0;
-                const percentDelta = endPercent === undefined
-                    ? NaN
-                    : endPercent - startPercent;
-                const validPercentDelta = !Number.isNaN(percentDelta) &&
-                    percentDelta >= 0;
+                const percentDelta = endPercent === undefined ? NaN : endPercent - startPercent;
+                const validPercentDelta = !Number.isNaN(percentDelta) && percentDelta >= 0;
                 return [
                     {
                         process: "intake",
